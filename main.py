@@ -31,6 +31,12 @@ def gate_ok(line: str) -> bool:
         return False
     if "\n" in line or "\r" in line:
         return False
+    # A fortune is plain text: reject control characters outright, and
+    # reject padding the gate cannot see (leading/trailing whitespace).
+    if line != line.strip():
+        return False
+    if any(ord(c) < 32 or ord(c) == 127 for c in line):
+        return False
     line.encode("utf-8")  # raises if the text is not valid UTF-8
     return True
 
